@@ -6,7 +6,7 @@ export default async function Administrators({ searchParams }: { searchParams: {
   const me = await requireSuper();
   const { data: admins } = await db.from('administrators').select('*').order('created_at');
   const { data: u } = await db.auth.admin.listUsers({ perPage: 200 });
-  const email = (id: string) => u?.users.find(x => x.id === id)?.email || '';
+  const email = (id: string) => ((u as any)?.users as any[] | undefined)?.find((x: any) => x.id === id)?.email || '';
   const Perms = ({ a }: { a?: any }) => <div className="actions" style={{ margin: '12px 0' }}>{Object.entries(PERMS).map(([k, l]) => <label key={k} className="tg"><input type="checkbox" name={`p_${k}`} defaultChecked={a ? can(a, k) : k !== 'export_orders'} />{l}</label>)}</div>;
   return (
     <>
