@@ -40,7 +40,7 @@ Already good in your code (kept): server-side price calculation, Paystack webhoo
 bing.com/webmasters > Add site > HTML meta tag > put the value in `BING_SITE_VERIFICATION`. (You can also import from Search Console.) Bing also feeds DuckDuckGo, Yahoo and ChatGPT search.
 
 ## Step 4 — Google Business Profile (biggest boost for "joggers in Lagos/Nigeria" searches)
-business.google.com > create a profile for Lilies of the Field Tailors. Use the same name and phone (0806 517 0300) as the site, choose the right category (e.g. "Clothing store" or "Tailor"), add your real address or service area, photos, and your website URL. Verify by the method Google offers. Ask happy customers for reviews.
+business.google.com > create a profile for Lilies of the Field Tailors. Use the same name and phone (0704 777 3134) as the site, choose the right category (e.g. "Clothing store" or "Tailor"), add your real address or service area, photos, and your website URL. Verify by the method Google offers. Ask happy customers for reviews.
 
 ## Step 5 — Google Merchant Center (free product listings in Google Shopping)
 merchants.google.com > claim your website > add the jogger product with the same price and images as the site. Free listings let your product show in Google Shopping and Images. Keep the Merchant price equal to the site price.

@@ -3,8 +3,8 @@
 export const OFFERS: Record<number, { qty: number; priceKobo: number; free: string }> = {
   1: { qty: 1, priceKobo: 2_049_900, free: '1 pair of socks' },
   2: { qty: 2, priceKobo: 3_899_900, free: '2 pairs of socks' },
-  3: { qty: 3, priceKobo: 3 * 2_049_900, free: '3 pairs of socks + 1 free cap' },
-  5: { qty: 5, priceKobo: 5 * 2_049_900, free: '5 pairs of socks + 2 free caps' },
+  3: { qty: 3, priceKobo: 3 * 2_049_900, free: '1 free cap' },
+  5: { qty: 5, priceKobo: 5 * 2_049_900, free: '2 free caps' },
 };
 export const SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 export const COLOURS = ['Black', 'Charcoal', 'Navy', 'Olive', 'Grey', 'Cream'];

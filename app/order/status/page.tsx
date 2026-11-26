@@ -40,16 +40,16 @@ export default async function Status({ searchParams }: { searchParams: { referen
               <div key={n} className="cf-item"><img src="/assets/img/front.webp" alt="" width="56" height="62" /><div><b>LOFT Joggers</b><span>{i.colour} · Size {i.size}</span></div><em>×1</em></div>))}
             {o.free_items && <div className="cf-free">Free with your order: {o.free_items}</div>}
             <dl><div><dt>Items</dt><dd>{naira(o.subtotal_kobo)}</dd></div><div><dt>Delivery</dt><dd>{o.delivery_kobo ? naira(o.delivery_kobo) : 'Included'}</dd></div><div className="t"><dt>Total paid</dt><dd>{naira(o.total_kobo)}</dd></div></dl>
-            <p className="cf-small">Delivering to {[o.city, o.state].filter(Boolean).join(', ')}.</p>
+            <p className="cf-small">Delivering to {[o.city, o.state].filter(Boolean).join(', ')} via GIG Logistics.</p>
           </div>
           <div className="cf-card dark">
             <h2>What happens next</h2>
-            <ol>{STEPS.map((s, i) => <li key={s} className={i === 0 && ok ? 'done' : ''}><span>{i === 0 && ok ? '✓' : i + 1}</span><div><b>{s}</b><small>{['We have your order and payment.', 'We pack your joggers and any free gifts.', 'We message you when it is dispatched.', 'Enjoy your new joggers.'][i]}</small></div></li>)}</ol>
+            <ol>{STEPS.map((s, i) => <li key={s} className={i === 0 && ok ? 'done' : ''}><span>{i === 0 && ok ? '✓' : i + 1}</span><div><b>{s}</b><small>{['We have your order and payment.', 'We pack your joggers and any free gifts.', 'GIG Logistics delivers your order. We message you when it is dispatched.', 'Enjoy your new joggers.'][i]}</small></div></li>)}</ol>
           </div>
         </section>)}
       <section className="cf-actions">
         <a className="cf-btn lime" href={ok ? '/' : '/#shop'}>{ok ? 'Continue shopping' : 'Try again'}</a>
-        <a className="cf-btn line" href={`https://wa.me/2348065170300?text=${encodeURIComponent(o ? `Hello LOFT, about my order ${o.order_number}.` : 'Hello LOFT, I need help with my order.')}`}>Message LOFT on WhatsApp</a>
+        <a className="cf-btn line" href={`https://wa.me/2347047773134?text=${encodeURIComponent(o ? `Hello LOFT, about my order ${o.order_number}.` : 'Hello LOFT, I need help with my order.')}`}>Message LOFT on WhatsApp</a>
       </section>
     </main>
   );

@@ -1,9 +1,9 @@
 const API = 'https://api.paystack.co';
 const H = () => ({ Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json' });
 export async function initTx(p: { email: string; amountKobo: number; reference: string; callbackUrl: string; metadata: object }) {
-  const r = await fetch(`${API}/transaction/initialize`, { method: 'POST', headers: H(), body: JSON.stringify({ email: p.email, amount: p.amountKobo, currency: 'NGN', reference: p.reference, callback_url: p.callbackUrl, metadata: p.metadata }) });
-  const j = await r.json();
-  if (!r.ok || !j.status) throw new Error(j.message || 'Paystack initialize failed');
+  const r = await fetch(`${API}/transaction/initialize`, { method: 'POST', headers: H(), body: JSON.stringify({ email: p.email, amount: p.amountKobo, currency: 'NGN', reference: p.reference, callback_url: p.callbackUrl, metadata: p.metadata }), signal: AbortSignal.timeout(15_000) });
+  const j = await r.json().catch(() => ({} as any));
+  if (!r.ok || !j.status) throw new Error(`${r.status} ${j.message || 'Paystack initialize failed'} (ref ${p.reference})`);
   return j.data as { authorization_url: string; reference: string };
 }
 export async function verifyTx(reference: string) {
