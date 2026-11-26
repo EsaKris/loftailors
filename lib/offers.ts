@@ -1,10 +1,10 @@
 // Single source of truth for prices. The server always recomputes totals from here,
 // never from what the browser sends. Amounts are in kobo.
 export const OFFERS: Record<number, { qty: number; priceKobo: number; free: string }> = {
-  1: { qty: 1, priceKobo: 2_049_900, free: '' },
-  2: { qty: 2, priceKobo: 3_899_900, free: 'A free gift (LOFT confirms which)' },
-  3: { qty: 3, priceKobo: 3 * 2_049_900, free: '1 free cap' },   // 3 x regular price: confirm with LOFT
-  5: { qty: 5, priceKobo: 5 * 2_049_900, free: '2 free caps' },  // 5 x regular price: confirm with LOFT
+  1: { qty: 1, priceKobo: 2_049_900, free: '1 pair of socks' },
+  2: { qty: 2, priceKobo: 3_899_900, free: '2 pairs of socks' },
+  3: { qty: 3, priceKobo: 3 * 2_049_900, free: '3 pairs of socks + 1 free cap' },
+  5: { qty: 5, priceKobo: 5 * 2_049_900, free: '5 pairs of socks + 2 free caps' },
 };
 export const SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 export const COLOURS = ['Black', 'Charcoal', 'Navy', 'Olive', 'Grey', 'Cream'];

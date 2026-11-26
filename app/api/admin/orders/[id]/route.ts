@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { getAdmin, can } from '@/lib/auth';
 import { logActivity } from '@/lib/notify';
 import { backupOrder } from '@/lib/sheets';
+import { deductGifts } from '@/lib/gifts';
 import { getSetting } from '@/lib/settings';
 import { sendOrderEmail, STATUS_EMAIL } from '@/lib/email';
 import { refundTx } from '@/lib/paystack';
@@ -57,6 +58,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     await db.from('orders').update({ payment_status: 'successful', order_status: o.order_status === 'new' ? 'payment_confirmed' : o.order_status, paid_at: now, updated_at: now }).eq('id', o.id);
     await db.from('status_history').insert({ order_id: o.id, admin_id: admin.id, from_status: o.order_status, to_status: 'payment_confirmed', note: 'Marked paid manually' });
     await db.rpc('deduct_stock', { p_order: o.id });
+    await deductGifts(o.id);
     await backupOrder(o.id, 'PAID');
     await sendOrderEmail(o.id, 'payment_confirmation');
     return to('Marked as paid');

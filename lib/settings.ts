@@ -22,13 +22,16 @@ export async function getOffers(): Promise<OfferMap> {
   return Object.keys(m).length ? m : DEFAULTS;
 }
 
-// Pricing used by the cart: row 1 = single price, row 2 = pair price + gift, rows 3+ = free-cap tiers (min quantity, caps).
+// Pricing used by the cart: row 1 = single price, row 2 = pair price, rows 3+ = free-cap tiers (min quantity, caps).
+// Socks per jogger and the struck-out "original price" live in the settings table (Admin > Offers & settings).
 export async function getPricing(): Promise<PricingCfg> {
-  const { data } = await db.from('offers').select('*').eq('active', true);
+  const [{ data }, socksRaw, listRaw] = await Promise.all([db.from('offers').select('*').eq('active', true), getSetting('socks_per_jogger', '1'), getSetting('list_price_naira', '')]);
+  const socksPer = /^\d+$/.test(socksRaw) ? Math.min(3, parseInt(socksRaw, 10)) : 1;
+  const listKobo = /^\d+$/.test(listRaw) ? parseInt(listRaw, 10) * 100 : 0;
   const rows = data || [];
-  if (!rows.length) return DEFAULT_PRICING;
+  if (!rows.length) return { ...DEFAULT_PRICING, socksPer, listKobo };
   const r1 = rows.find((r: any) => r.q === 1), r2 = rows.find((r: any) => r.q === 2);
   const single = r1 ? Number(r1.price_kobo) : DEFAULT_PRICING.singleKobo;
   const tiers = rows.filter((r: any) => r.q >= 3).map((r: any) => ({ min: r.q, caps: r.caps ?? (r.q === 3 ? 1 : r.q === 5 ? 2 : 0), label: r.free_text || '' })).filter((t: any) => t.caps > 0);
-  return { singleKobo: single, pairKobo: r2 ? Number(r2.price_kobo) : 2 * single, giftText: r2 ? r2.free_text || '' : '', capTiers: tiers };
+  return { singleKobo: single, pairKobo: r2 ? Number(r2.price_kobo) : 2 * single, giftText: '', capTiers: tiers, socksPer, listKobo: listKobo > single ? listKobo : 0 };
 }

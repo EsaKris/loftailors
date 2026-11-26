@@ -70,5 +70,5 @@ merchants.google.com > claim your website > add the jogger product with the same
 - If your `.env` or `public/index.html` are already tracked in Git, untrack them: `git rm --cached .env.local public/index.html public/robots.txt public/sitemap.xml`.
 
 ## Things to know
-- Prices in the page's structured data (₦20,499) are fixed in the template. If you change prices in Admin > Settings, also edit `site/index.template.html` (search `20499`, `38999`) so Google shows the same price.
+- Prices in the page's structured data (₦20,499) are fixed in the template. If you change prices in Admin > Settings, also edit `site/index.template.html` (search `20499`, `38999`) so Google shows the same price. The struck-out original price is set in Admin > Offers & settings and is only displayed, never charged.
 - The code was changed and checked with scripts (prebuild output, JSON-LD validity, CSP generation) but I could not run `npm install` / `next build` here (no network). Run `npm install && npm run build` once and test checkout, login and admin before going live.

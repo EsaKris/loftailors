@@ -6,12 +6,13 @@ import { Head, Tile, Flash } from '@/components/ui';
 export default async function Inventory() {
   const a = await requireCan('view_inventory');
   const { data } = await db.from('variant_stock').select('*');
+  const { data: gifts, error: giftErr } = await db.from('gift_stock').select('*').order('item', { ascending: false });
   const get = (c: string, s: string) => (data || []).find((v: any) => v.colour === c && v.size === s);
   const out = (data || []).filter((v: any) => v.stock <= 0).length, low = (data || []).filter((v: any) => v.stock > 0 && v.stock <= v.low_stock_at).length;
   const total = (data || []).reduce((s: number, v: any) => s + Math.max(0, v.stock), 0);
   return (
     <>
-      <Head title="Inventory" sub="Stock by colour and size. Paid joggers reduce it automatically." />
+      <Head title="Inventory" sub="Stock by colour and size, plus the free socks and caps. Paid orders reduce it automatically." />
       <div className="tiles"><Tile icon="box" cls="v" label="Joggers in stock" value={total} /><Tile icon="bell" cls="g" label="Low stock" value={low} /><Tile icon="shield" cls="o" label="Out of stock" value={out} /><Tile icon="grid" cls="k" label="Tracked combinations" value={data?.length ?? 0} /></div>
       <div className="two" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.6fr) minmax(0,1fr)', gap: 18, alignItems: 'start' }}>
         <div className="card" style={{ overflowX: 'auto' }}><h2>Stock grid</h2>
@@ -26,6 +27,16 @@ export default async function Inventory() {
           <button className="btn mt" style={{ width: '100%' }}>Update stock</button></form>
           : <div className="card"><h2>View only</h2><p className="muted">Only a Super Admin can change stock.</p></div>}
       </div>
+      <h2 style={{ marginTop: 28 }}>Free gifts</h2>
+      {giftErr ? <div className="card"><p className="muted" style={{ margin: 0 }}>Free-gift stock is not set up yet. In Supabase open SQL Editor and run the file <b>supabase/006_phase6_gifts.sql</b>, then refresh this page.</p></div> : (
+        <div className="two" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.6fr) minmax(0,1fr)', gap: 18, alignItems: 'start' }}>
+          <div className="tiles" style={{ margin: 0 }}>{(gifts || []).map((g: any) => <Tile key={g.item} icon="box" cls={g.stock <= 0 ? 'o' : g.stock <= g.low_stock_at ? 'g' : 'v'} label={g.label} value={g.stock} hint={g.stock <= 0 ? 'Out of stock' : g.stock <= g.low_stock_at ? 'Low stock' : 'In stock'} />)}</div>
+          {a.role === 'super' ? <form className="card" method="post" action="/api/admin/inventory"><h2>Update gift stock</h2>
+            <div className="stack"><label className="fld"><span>Item</span><select name="item">{(gifts || []).map((g: any) => <option key={g.item} value={g.item}>{g.label}</option>)}</select></label>
+              <label className="fld"><span>Quantity (use − to remove)</span><input name="delta" type="number" placeholder="e.g. 100 or -2" required /></label>
+              <label className="fld"><span>Note (optional)</span><input name="note" placeholder="e.g. new delivery of socks" /></label></div>
+            <button className="btn mt" style={{ width: '100%' }}>Update gift stock</button></form> : null}
+        </div>)}
     </>
   );
 }

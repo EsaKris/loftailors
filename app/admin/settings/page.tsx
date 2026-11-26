@@ -12,6 +12,7 @@ export default async function Settings({ searchParams }: { searchParams: { msg?:
   const bn = (x: string) => (bl || []).filter((r: any) => r.status === x).length;
   const fee = await getDeliveryKobo();
   const s = Object.fromEntries((st || []).map((x: any) => [x.key, x.value]));
+  const singleNaira = Number((offers || []).find((o: any) => o.q === 1)?.price_kobo || 0) / 100;
   const checks: [string, boolean, string][] = [
     ['Paystack secret key', !!process.env.PAYSTACK_SECRET_KEY, 'Add PAYSTACK_SECRET_KEY to your environment and restart'],
     ['Delivery fee for card orders', fee !== null, 'Set it in Store settings below'],
@@ -30,13 +31,19 @@ export default async function Settings({ searchParams }: { searchParams: { msg?:
         <div className="ch"><div><h2>Setup status</h2><small>The card button works when the first two lines are ready.</small></div><span className={`pill ${ready ? 'ok' : 'warn'}`}>{ready ? 'Card payment ready' : 'Setup needed'}</span></div>
         <div className="stack">{checks.map(([l, ok, hint]) => <div key={l} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}><span>{l}{!ok && <small> · {hint}</small>}</span><span className={`pill ${ok ? 'ok' : 'warn'}`}>{ok ? 'Ready' : 'Not set'}</span></div>)}</div></div>
       <h2>Pricing</h2>
-      <p className="muted" style={{ marginTop: 0 }}>Customers add joggers to a cart. Every 2 joggers cost the pair price and earn a free gift; a leftover single costs the single price. Free caps unlock by total quantity. Example: 3 joggers = pair + single, 1 free gift and 1 free cap.</p>
+      <p className="muted" style={{ marginTop: 0 }}>Customers add joggers to a cart. Every 2 joggers cost the pair price; a leftover single costs the single price. The free gift is socks (pairs per jogger, set in the first card below). Free caps unlock by total quantity. Example: 3 joggers = pair + single, 3 pairs of socks and 1 free cap.</p>
+      <form className="card" method="post" action="/api/admin/settings" style={{ marginBottom: 18 }}><input type="hidden" name="do" value="extras" />
+        <div className="ch"><div><h2 style={{ margin: 0 }}>Original price and free socks</h2><small>Shown on the storefront. The original price is only displayed (struck out). Customers are always charged the prices below.</small></div></div>
+        <div className="grid2"><label className="fld"><span>Original price of one jogger (₦), shown struck out. Leave empty to hide.</span><input name="list_price_naira" type="number" min="0" step="1" defaultValue={s.list_price_naira} placeholder="e.g. 30000" /></label>
+          <label className="fld"><span>Free pairs of socks per jogger (0 turns socks off)</span><input name="socks_per_jogger" type="number" min="0" max="3" defaultValue={s.socks_per_jogger ?? '1'} /></label></div>
+        {s.list_price_naira && Number(s.list_price_naira) <= singleNaira ? <p className="muted" style={{ marginBottom: 0 }}>The original price must be higher than the selling price to show.</p> : null}
+        <button className="btn mt">Save</button></form>
       <div className="grid2">{(offers || []).map((o: any) => (
         <form key={o.q} className="card" method="post" action="/api/admin/settings"><input type="hidden" name="do" value="offer" /><input type="hidden" name="q" value={o.q} /><input type="hidden" name="label" value={o.label} /><input type="hidden" name="tag" value={o.tag} />
           <div className="ch"><h2 style={{ margin: 0 }}>{o.q === 1 ? 'Single jogger' : o.q === 2 ? 'Pair deal (every 2 joggers)' : `Free caps from ${o.q} joggers`}</h2><label className="tg"><input type="checkbox" name="active" defaultChecked={o.active} />Active</label></div>
           <div className="stack">
             {o.q <= 2 ? <label className="fld"><span>{o.q === 1 ? 'Price of one jogger (₦)' : 'Price of a pair (₦)'}</span><input name="price" type="number" min="1" step="1" defaultValue={Number(o.price_kobo) / 100} /></label> : <input type="hidden" name="price" value={Number(o.price_kobo) / 100} />}
-            {o.q === 2 && <label className="fld"><span>Free gift with every pair (leave the exact gift here once confirmed)</span><input name="free_text" defaultValue={o.free_text} /></label>}
+            {o.q === 2 && <input type="hidden" name="free_text" value={o.free_text} />}
             {o.q >= 3 && <label className="fld"><span>Free caps at this quantity</span><input name="caps" type="number" min="0" max="10" defaultValue={o.caps ?? (o.q === 3 ? 1 : o.q === 5 ? 2 : 0)} /></label>}
             {o.q >= 3 && <input type="hidden" name="free_text" value={o.free_text} />}
             {o.q < 3 && <input type="hidden" name="caps" value="0" />}</div>

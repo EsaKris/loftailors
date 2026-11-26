@@ -5,5 +5,5 @@ import { MAX_QTY } from '@/lib/pricing';
 export const dynamic = 'force-dynamic';
 export async function GET() {
   const p = await getPricing();
-  return NextResponse.json({ single: p.singleKobo / 100, pair: p.pairKobo / 100, gift: p.giftText, tiers: p.capTiers.map(t => ({ min: t.min, caps: t.caps })), maxQty: MAX_QTY }, { headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' } });
+  return NextResponse.json({ single: p.singleKobo / 100, pair: p.pairKobo / 100, socks: p.socksPer, list: p.listKobo / 100, tiers: p.capTiers.map(t => ({ min: t.min, caps: t.caps })), maxQty: MAX_QTY }, { headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' } });
 }

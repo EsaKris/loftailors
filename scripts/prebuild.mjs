@@ -63,7 +63,7 @@ ${imgs.map(i => `    <image:image><image:loc>${site}/assets/${i}</image:loc></im
 // ── Web app manifest ──
 writeFileSync('public/manifest.webmanifest', JSON.stringify({
   name: 'LOFT — Lilies of the Field Tailors', short_name: 'LOFT', description: 'LOFT men’s joggers from Lilies of the Field Tailors.',
-  start_url: '/', scope: '/', display: 'browser', lang: 'en-NG', background_color: '#ffffff', theme_color: '#ffffff',
+  start_url: '/', scope: '/', display: 'browser', lang: 'en-NG', background_color: '#f3e9e0', theme_color: '#f3e9e0',
   icons: [{ src: '/assets/img/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' }, { src: '/assets/img/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
 }, null, 2) + '\n');
 

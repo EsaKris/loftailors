@@ -15,6 +15,15 @@ export async function POST(req: Request) {
     await logActivity(a.id, 'offer.update', 'offer', String(q), `${price / 100} NGN`);
     return back(`Offer for ${q} saved`);
   }
+  if (f.get('do') === 'extras') {
+    const list = String(f.get('list_price_naira') ?? '').trim().replace(/[,\s]/g, ''), socks = String(f.get('socks_per_jogger') ?? '1').trim();
+    if (!/^\d*$/.test(list)) return back('Original price must be a number');
+    if (!/^[0-3]$/.test(socks)) return back('Socks per jogger must be 0 to 3');
+    const now = new Date().toISOString();
+    await db.from('settings').upsert([{ key: 'list_price_naira', value: list, updated_at: now }, { key: 'socks_per_jogger', value: socks, updated_at: now }], { onConflict: 'key' });
+    await logActivity(a.id, 'settings.extras', 'settings', undefined, `original ${list || 'off'}, socks ${socks}`);
+    return back('Saved. The storefront updates within a minute.');
+  }
   const keys: Record<string, RegExp> = { delivery_fee_naira: /^(\d+(\.\d+)?)?$/, high_value_naira: /^\d+$/, inactive_days: /^\d+$/, followup_days: /^\d+$/ };
   for (const [k, re] of Object.entries(keys)) { const v = String(f.get(k) ?? '').trim(); if (re.test(v)) await db.from('settings').upsert({ key: k, value: v, updated_at: new Date().toISOString() }, { onConflict: 'key' }); }
   await db.from('settings').upsert({ key: 'whatsapp_orders', value: f.get('whatsapp_orders') === 'on' ? 'on' : 'off', updated_at: new Date().toISOString() }, { onConflict: 'key' });

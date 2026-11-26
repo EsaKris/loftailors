@@ -3,6 +3,7 @@ import { verifyTx } from './paystack';
 import { sendOrderEmail } from './email';
 import { notify } from './notify';
 import { backupOrder } from './sheets';
+import { deductGifts } from './gifts';
 
 // The ONLY place an order becomes "paid". Always asks Paystack directly (server-side),
 // checks amount + currency against what we stored, and is safe to call many times.
@@ -30,6 +31,7 @@ export async function settlePayment(reference: string): Promise<{ ok: boolean; s
     await db.from('orders').update({ payment_status: 'successful', order_status: 'payment_confirmed', paid_at: d.paid_at ?? new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', pay.order_id);
     await db.from('status_history').insert({ order_id: pay.order_id, from_status: 'payment_pending', to_status: 'payment_confirmed', note: 'Paystack payment verified' });
     await db.rpc('deduct_stock', { p_order: pay.order_id });
+    await deductGifts(pay.order_id);
     await backupOrder(pay.order_id, 'PAID');
     await notify('payment', 'Payment confirmed', `Order paid by card`, `/admin/orders/${pay.order_id}`, `paid:${pay.order_id}`);
     const { data: vs } = await db.from('variant_stock').select('id,size,colour,stock,low_stock_at');
