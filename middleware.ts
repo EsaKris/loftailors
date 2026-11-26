@@ -44,4 +44,4 @@ export async function middleware(req: NextRequest) {
   return NextResponse.redirect(new URL('/login', req.url));
 }
 // Only admin pages and the browser-facing POST endpoints. Webhooks (Paystack, Resend), the cron job and the public tracker are NOT listed.
-export const config = { matcher: ['/admin/:path*', '/api/admin/:path*', '/api/checkout'] };
+export const config = { matcher: ['/admin/:path*', '/api/admin/:path*', '/api/checkout', '/api/auth/forgot-password'] };

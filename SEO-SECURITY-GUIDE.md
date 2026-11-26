@@ -72,3 +72,13 @@ merchants.google.com > claim your website > add the jogger product with the same
 ## Things to know
 - Prices in the page's structured data (₦20,499) are fixed in the template. If you change prices in Admin > Settings, also edit `site/index.template.html` (search `20499`, `38999`) so Google shows the same price. The struck-out original price is set in Admin > Offers & settings and is only displayed, never charged.
 - The code was changed and checked with scripts (prebuild output, JSON-LD validity, CSP generation) but I could not run `npm install` / `next build` here (no network). Run `npm install && npm run build` once and test checkout, login and admin before going live.
+
+
+## Supabase admin password recovery
+
+- Set `SITE_URL` in Vercel Production to `https://www.loftailors.com` (no trailing slash).
+- In Supabase Authentication → URL Configuration, set Site URL to `https://www.loftailors.com`.
+- Add `https://www.loftailors.com/reset-password` to the allowed Redirect URLs. Keep localhost only for local development if needed.
+- Redeploy after changing Vercel environment variables.
+- Admin login now links to `/forgot-password`; recovery emails return to `/reset-password`.
+- The reset page consumes the Supabase recovery session in the browser, updates the password through Supabase Auth, signs out, and asks the administrator to sign in again through the existing admin login flow.

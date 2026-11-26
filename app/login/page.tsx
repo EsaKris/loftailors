@@ -8,6 +8,7 @@ export default function Login({ searchParams }: { searchParams: { e?: string } }
         <label><small>Password</small><input name="password" type="password" required autoComplete="current-password" style={{ width: '100%' }} /></label>
         {searchParams.e && <p className="pill bad" style={{ margin: 0, justifyContent: 'center' }}>Sign-in failed. Check your details.</p>}
         <button className="btn" style={{ width: '100%' }}>Sign in</button>
+        <div style={{ textAlign: 'center' }}><a href="/forgot-password" style={{ color: 'inherit', fontSize: 13, textDecoration: 'underline' }}>Forgot your password?</a></div>
       </form>
     </main>
   );

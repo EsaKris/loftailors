@@ -21,7 +21,9 @@ const prodOnly = dev ? [] : ['upgrade-insecure-requests'];
 const storeCsp = [...common, `script-src 'self' ${hashes.length ? hashes.join(' ') : "'unsafe-inline'"}`, "connect-src 'self'", ...prodOnly].join('; ');
 // Admin / login / order pages are built by Next.js, which injects its own inline bootstrap scripts, so 'unsafe-inline' is needed here.
 // Everything else (framing, plugins, third-party scripts, outside connections, form targets) is still locked down.
-const appCsp = [...common, `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ''}`, `connect-src 'self'${dev ? ' ws: wss:' : ''}`, ...prodOnly].join('; ');
+let supabaseOrigin = '';
+try { supabaseOrigin = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || '').origin; } catch {}
+const appCsp = [...common, `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ''}`, `connect-src 'self'${supabaseOrigin ? ' ' + supabaseOrigin : ''}${dev ? ' ws: wss:' : ''}`, ...prodOnly].join('; ');
 
 const baseSecurity = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -60,7 +62,7 @@ module.exports = {
       { source: '/', headers: [csp(storeCsp)] },
       { source: '/index.html', headers: [csp(storeCsp)] },
       // Private app pages and APIs: never indexed, never cached by browsers/CDNs
-      ...['/admin/:path*', '/login', '/order/:path*', '/unsubscribe'].map(source => ({ source, headers: [csp(appCsp), noindex, noStore] })),
+      ...['/admin/:path*', '/login', '/forgot-password', '/reset-password', '/order/:path*', '/unsubscribe'].map(source => ({ source, headers: [csp(appCsp), noindex, noStore] })),
       { source: '/order/:path*', headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }] },   // order URLs carry the payment reference
       { source: '/api/:path*', headers: [noindex] },
       { source: '/api/admin/:path*', headers: [noStore] },
